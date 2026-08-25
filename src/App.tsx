@@ -11,14 +11,13 @@ function App() {
     recursos: 0
   })
 
-  let ref = useRef(0)
+  const [count, setCount] = useState(0)
 
-  //usar essa coisa aqui para a parte do historico
-  useEffect(() => {
-    setInterval(() => {
+  const [status, setStatus] = useState(false)
 
-    }, 1000)
-  }, [])
+  const divRef = useRef<HTMLDivElement>(null)
+
+  
 
   const descansar = useCallback(() => {
     //spread operator (...)
@@ -31,7 +30,7 @@ function App() {
     }))
 
     alert("Você descansou e recuperou suas forças!")
-    ref.current = ref.current + 1
+    setCount(count + 1)
   }, [todos.energia, todos.vida])
 
   const comer = useCallback(() => {
@@ -47,8 +46,8 @@ function App() {
     }))
 
     alert("Você comeu e recuperou parte da vida!")
-    
-    ref.current = ref.current + 1
+
+    setCount(count + 1)
   }, [todos.comida, todos.vida])
 
   const trabalhar = useCallback(() => {
@@ -58,18 +57,22 @@ function App() {
       recursos: valorAtual.recursos + 10
     }))
     alert("Você trabalhou e conseguiu obter novos recursos!")
-    ref.current = ref.current + 1
+    setCount(count + 1)
   }, [todos.energia, todos.recursos])
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (ref.current === 2){
-        
-      }
-    }, 10000)
+  console.log(count)
 
-    clearTimeout
-  }, []);
+  useEffect(() => {
+    if (count === 2) {
+      if (divRef.current) {
+        divRef.current.style.display = 'none'
+      }
+    }
+
+
+    
+  },[count])
+
 
   return (
     <>
@@ -80,10 +83,15 @@ function App() {
 
       <main>
 
-        <AcoesExplorar setTodos={setTodos} />
-        <button onClick={trabalhar} style={{ marginRight: '10px' }} id="Trabalhar">Trabalhar</button>
-        <button onClick={comer} style={{ marginRight: '10px' }} id="Comer">Comer</button>
-        <button onClick={descansar} style={{ marginRight: '10px' }} id="Descansar">Descansar</button>
+        <AcoesExplorar 
+        //talvez de para colocar um if ternário aqui para validar se o status está true
+        //e trabalhar ele no useEffect se ele estiver true vai reseta tudo.
+        setTodos={setTodos} />
+        <div ref={divRef} style={{ float: 'inline-start' }} >
+          <button onClick={trabalhar} style={{ marginRight: '10px' }} >Trabalhar</button>
+          <button onClick={comer} style={{ marginRight: '10px' }} >Comer</button>
+          <button onClick={descansar} style={{ marginRight: '10px' }} >Descansar</button>
+        </div>
 
       </main>
 
