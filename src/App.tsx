@@ -1,17 +1,8 @@
-//useEffect cuidará da vida e demais atributos
-//Mais para frente fazer o menu interativo
-// para a função de acao, da para adicionar um contador de escolhas,
-//e a cada duas escolhas sem ser Explorar, fazer com que a terceira escolha seja Explorar, e que a cada escolha de Explorar, o contador zere.
-import { useState, useEffect, useCallback } from 'react'
-import { RegrasDeAcao } from './components/RegrasDeAcao'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { AcoesExplorar } from './components/AcoesExplorar'
 
 
 function App() {
-
-  const [vida, alterarVida] = useState(100)
-  const [energia, alterarEnergia] = useState(100)
-  const [comida, alterarComida] = useState(5)
-  const [recursos, alterarRecursos] = useState(0)
 
   const [todos, setTodos] = useState({
     vida: 100,
@@ -19,6 +10,8 @@ function App() {
     comida: 5,
     recursos: 0
   })
+
+  let ref = useRef(0)
 
   //usar essa coisa aqui para a parte do historico
   useEffect(() => {
@@ -28,57 +21,69 @@ function App() {
   }, [])
 
   const descansar = useCallback(() => {
-    alterarEnergia(energia + 30)
-    alterarVida(vida + 5)
-
     //spread operator (...)
+    // spread operator é usado para copiar as propriedades de um objeto para outro objeto.
+    // nesse caso, ele está copiando apenas as propriedades passadas e deixando as outras propriedades do objeto inalteradas.
     setTodos((valorAtual) => ({
-      ...valorAtual,// comida: 5 e recurso: 0
+      ...valorAtual,
       energia: valorAtual.energia + 30,
       vida: valorAtual.vida + 5
     }))
 
-
     alert("Você descansou e recuperou suas forças!")
-  }, [energia, vida])
+    ref.current = ref.current + 1
+  }, [todos.energia, todos.vida])
 
   const comer = useCallback(() => {
-    if (comida <= 0) {
+    if (todos.comida <= 0) {
       alert("Você não tem comida suficiente para comer!")
       return null
     }
 
-    alterarComida(comida - 1)
-    alterarVida(vida + 20)
-    alert("Você comeu e recuperou parte da vida!")
+    setTodos((valorAtual) => ({
+      ...valorAtual,
+      comida: valorAtual.comida - 1,
+      vida: valorAtual.vida + 20
+    }))
 
-  }, [comida, vida])
+    alert("Você comeu e recuperou parte da vida!")
+    
+    ref.current = ref.current + 1
+  }, [todos.comida, todos.vida])
 
   const trabalhar = useCallback(() => {
-    alterarEnergia(energia - 25)
-    alterarRecursos(recursos + 10)
+    setTodos((valorAtual) => ({
+      ...valorAtual,
+      energia: valorAtual.energia - 25,
+      recursos: valorAtual.recursos + 10
+    }))
     alert("Você trabalhou e conseguiu obter novos recursos!")
-  }, [energia, recursos])
+    ref.current = ref.current + 1
+  }, [todos.energia, todos.recursos])
 
-  const [count] = useState(0);
-  const [calculation, setCalculation] = useState(0);
   useEffect(() => {
-    // setCalculation(() => )
-  })
+    setTimeout(() => {
+      if (ref.current === 2){
+        
+      }
+    }, 10000)
+
+    clearTimeout
+  }, []);
 
   return (
     <>
-      <h1>Vida: {vida}</h1>
-      <h1>Energia: {energia}</h1>
-      <h1>Comida: {comida}</h1>
-      <h1>Recursos: {recursos}</h1>
+      <h1>Vida: {todos.vida}</h1>
+      <h1>Energia: {todos.energia}</h1>
+      <h1>Comida: {todos.comida}</h1>
+      <h1>Recursos: {todos.recursos}</h1>
 
       <main>
 
-        <RegrasDeAcao alterarComida={alterarComida} comida={comida} alterarEnergia={alterarEnergia} energia={energia} alterarVida={alterarVida} vida={vida} alterarRecursos={alterarRecursos} recursos={recursos} />
-        <button onClick={trabalhar} style={{ marginRight: '10px' }}>Trabalhar</button>
-        <button onClick={comer} style={{ marginRight: '10px' }}>Comer</button>
-        <button onClick={descansar} style={{ marginRight: '10px' }}>Descansar</button>
+        <AcoesExplorar setTodos={setTodos} />
+        <button onClick={trabalhar} style={{ marginRight: '10px' }} id="Trabalhar">Trabalhar</button>
+        <button onClick={comer} style={{ marginRight: '10px' }} id="Comer">Comer</button>
+        <button onClick={descansar} style={{ marginRight: '10px' }} id="Descansar">Descansar</button>
 
       </main>
 
