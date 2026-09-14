@@ -11,13 +11,15 @@ function App() {
     recursos: 0
   })
 
-  const [count, setCount] = useState(0)
+  const [status, setStatus] = useState({
+    estado : false
+  })
 
-  const [status, setStatus] = useState(false)
+  const [count, setCount] = useState(0)
 
   const divRef = useRef<HTMLDivElement>(null)
 
-  
+
 
   const descansar = useCallback(() => {
     //spread operator (...)
@@ -69,9 +71,12 @@ function App() {
       }
     }
 
+    const aux = status.estado
+    if (aux === true) {
+      return () => clearTimeout(count)
+    }
 
-    
-  },[count])
+  }, [count])
 
 
   return (
@@ -83,10 +88,10 @@ function App() {
 
       <main>
 
-        <AcoesExplorar 
-        //talvez de para colocar um if ternário aqui para validar se o status está true
-        //e trabalhar ele no useEffect se ele estiver true vai reseta tudo.
-        setTodos={setTodos} />
+        <AcoesExplorar
+          //talvez de para colocar um if ternário aqui para validar se o status está true
+          //e trabalhar ele no useEffect se ele estiver true vai reseta tudo.
+          setStatus={setStatus} setTodos={setTodos} />
         <div ref={divRef} style={{ float: 'inline-start' }} >
           <button onClick={trabalhar} style={{ marginRight: '10px' }} >Trabalhar</button>
           <button onClick={comer} style={{ marginRight: '10px' }} >Comer</button>

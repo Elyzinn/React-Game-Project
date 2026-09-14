@@ -7,9 +7,13 @@ interface AcoesProps {
         comida: number;
         recursos: number;
     }>>;
+
+    setStatus: React.Dispatch<React.SetStateAction<{
+        estado : boolean
+    }>>;
 }
 
-export function AcoesExplorar({ setTodos }: AcoesProps) {
+export function AcoesExplorar({ setTodos, setStatus}: AcoesProps) {
 //trabalhar as ações de explorar, e mandar o resultado para o App
 const [num, setNum] = useState(0);
 
@@ -51,6 +55,10 @@ const explorar = useCallback(() => {
     if (num === 5) {
         alert("Você explorou a região, mas não encontrou nada.");
     }
+
+    setStatus((estadoAtual) => ({
+        estado : estadoAtual.estado = true
+    }));
 }, [num, setTodos]);
 
 
