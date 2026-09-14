@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { AcoesExplorar } from './components/AcoesExplorar'
 
 
@@ -17,10 +17,6 @@ function App() {
 
   const [count, setCount] = useState(0)
 
-  const divRef = useRef<HTMLDivElement>(null)
-
-
-
   const descansar = useCallback(() => {
     //spread operator (...)
     // spread operator é usado para copiar as propriedades de um objeto para outro objeto.
@@ -32,8 +28,8 @@ function App() {
     }))
 
     alert("Você descansou e recuperou suas forças!")
-    setCount(count + 1)
-  }, [todos.energia, todos.vida])
+    setCount((valorAtual) => valorAtual + 1)
+  }, [])
 
   const comer = useCallback(() => {
     if (todos.comida <= 0) {
@@ -49,8 +45,8 @@ function App() {
 
     alert("Você comeu e recuperou parte da vida!")
 
-    setCount(count + 1)
-  }, [todos.comida, todos.vida])
+    setCount((valorAtual) => valorAtual + 1)
+  }, [todos.comida])
 
   const trabalhar = useCallback(() => {
     setTodos((valorAtual) => ({
@@ -59,24 +55,15 @@ function App() {
       recursos: valorAtual.recursos + 10
     }))
     alert("Você trabalhou e conseguiu obter novos recursos!")
-    setCount(count + 1)
-  }, [todos.energia, todos.recursos])
-
-  console.log(count)
+    setCount((valorAtual) => valorAtual + 1)
+  }, [])
 
   useEffect(() => {
-    if (count === 2) {
-      if (divRef.current) {
-        divRef.current.style.display = 'none'
-      }
+    if (status.estado) {
+      setCount(0)
+      setStatus({ estado: false })
     }
-
-    const aux = status.estado
-    if (aux === true) {
-      return () => clearTimeout(count)
-    }
-
-  }, [count])
+  }, [status.estado])
 
 
   return (
@@ -92,11 +79,13 @@ function App() {
           //talvez de para colocar um if ternário aqui para validar se o status está true
           //e trabalhar ele no useEffect se ele estiver true vai reseta tudo.
           setStatus={setStatus} setTodos={setTodos} />
-        <div ref={divRef} style={{ float: 'inline-start' }} >
-          <button onClick={trabalhar} style={{ marginRight: '10px' }} >Trabalhar</button>
-          <button onClick={comer} style={{ marginRight: '10px' }} >Comer</button>
-          <button onClick={descansar} style={{ marginRight: '10px' }} >Descansar</button>
-        </div>
+        {count < 2 && (
+          <div style={{ float: 'inline-start' }} >
+            <button onClick={trabalhar} style={{ marginRight: '10px' }} >Trabalhar</button>
+            <button onClick={comer} style={{ marginRight: '10px' }} >Comer</button>
+            <button onClick={descansar} style={{ marginRight: '10px' }} >Descansar</button>
+          </div>
+        )}
 
       </main>
 
